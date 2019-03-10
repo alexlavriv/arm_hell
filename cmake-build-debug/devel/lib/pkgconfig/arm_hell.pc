@@ -1,0 +1,8 @@
+prefix=/home/vladi/catkin_ws/src/arm_hell/cmake-build-debug/devel
+
+Name: arm_hell
+Description: Description of arm_hell
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/vladi/catkin_ws/src/arm_hell/cmake-build-debug/devel/lib 
+Requires: 

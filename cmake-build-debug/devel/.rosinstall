@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/vladi/catkin_ws/src/arm_hell/cmake-build-debug/devel/setup.sh

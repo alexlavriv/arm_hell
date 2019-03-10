@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: arm_hell
+Description: Description of arm_hell
+Version: 0.0.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: 

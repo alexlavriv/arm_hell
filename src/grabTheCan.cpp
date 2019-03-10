@@ -18,18 +18,23 @@
 // TF2
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
+// C++
+#include <iostream>
+#include <string>
+#include <sstream>
 
 
-void pick(moveit::planning_interface::MoveGroupInterface& move_group);
+void pick(moveit::planning_interface::MoveGroupInterface& move_group, double *a);
 void printCurrentPos (moveit::planning_interface::MoveGroupInterface  &move_group);
 void closedGripper(trajectory_msgs::JointTrajectory& posture);
 void openGripper(trajectory_msgs::JointTrajectory& posture);
-void place(moveit::planning_interface::MoveGroupInterface& group);
+void place(moveit::planning_interface::MoveGroupInterface& group, double *a);
+double * tokenize(std::string &input);
 
-void place(moveit::planning_interface::MoveGroupInterface& group)
+void place(moveit::planning_interface::MoveGroupInterface& group, double *a)
 {
 
-    float a[] = {0.659703, 0.19,  0.480825};
+    //float a[] = {0.659703, 0.19,  0.48};
     bool success = false;
     // BEGIN_SUB_TUTORIAL place
     // TODO(@ridhwanluthra) - Calling place function may lead to "All supplied place locations failed. Retrying last
@@ -78,7 +83,7 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
 
     // Call place to place the object using the place locations given.
     int k=1;
-    while (!success){
+    //while (!success){
         printf("%s\n","Begin placing" );
         place_location[0].place_pose.pose.position.x = a[0];
         place_location[0].place_pose.pose.position.y = a[1];
@@ -88,13 +93,13 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
         moveit::planning_interface::MoveItErrorCode e = group.place("object", place_location);
         if (!e){
 
-            a[k % 3] +=0.01;
+            //a[k % 3] +=0.01;
 
             printf("An error has occured, placing again x: %f, y: %f , z: %f\n", a[0],a[1],a[2]);
         }else{
             success = true;
         }
-    }
+    //}
     // END_SUB_TUTORIAL
 }
 
@@ -133,13 +138,14 @@ void closedGripper(trajectory_msgs::JointTrajectory& posture)
 }
 
 
-void pick(moveit::planning_interface::MoveGroupInterface& move_group)
-{	float a[] = {0.559703, -0.37644,  0.380825};
+void pick(moveit::planning_interface::MoveGroupInterface& move_group, double *a)
+{
+    //float a[] = {0.559703, -0.37644,  0.380825};
     int k = 0;
     bool success = false;
 
     bool changeX = true;
-    while (!success){
+//    while (!success){
 
         // BEGIN_SUB_TUTORIAL pick1
         // Create a vector of grasps to be attempted, currently only creating single grasp.
@@ -198,14 +204,14 @@ void pick(moveit::planning_interface::MoveGroupInterface& move_group)
 
         moveit::planning_interface::MoveItErrorCode e = move_group.pick("object", grasps);
         if (!e){
-            k++;
-            a[k % 3] -=0.01;
+//            k++;
+//            a[k % 3] -=0.01;
 
             printf("An error has occured, trying again x: %f, y: %f , z: %f\n", a[0],a[1],a[2]);
         }else{
             success = true;
         }
-    }
+//    }
 }
 
 void addCollisionObjects(moveit::planning_interface::PlanningSceneInterface& planning_scene_interface)
@@ -333,14 +339,18 @@ int main(int argc, char** argv)
 
     double x, y, z;
     int userInput;
+    std::string location, destination, slashn;
+    float a[] = {0.559703, -0.37644,  0.380825};
+    float b[] = {0.659703, 0.19,  0.45};
     while (userInput != 6){
 
 
         std::cout << "1. Show current pose\n";
         std::cout << "2. Move to\n";
-        std::cout << "3. Pick\n";
+        std::cout << "3. Pick \n";
         std::cout << "6. Exit \n";
         std::cin >> userInput;
+        std::getline(std::cin, slashn);
 
         switch(userInput) {
             case 1  :
@@ -360,10 +370,19 @@ int main(int argc, char** argv)
                 break; //optional
             }
             case 3 :
-                pick(move_group);
-                place(move_group);
-                break;
+                {
+                std::cout << "Enter can location in x y z format" << std::endl;
+                std::getline(std::cin, location);
+                double *loc_array = tokenize(location);
+                pick(move_group, loc_array);
 
+                std::cout << "Enter destination in x y z format" << std::endl;
+                std::getline(std::cin, destination);
+                double *dest_array = tokenize(destination);
+                place(move_group, dest_array);
+
+                break;
+            }
             case 4 :
             {
 
@@ -409,4 +428,15 @@ void moveArmTo (double x, double y, double z,
     // visual_tools.prompt("Press 'next' to move");
     move_group.move();
 
+}
+
+double * tokenize(std::string &input){
+    double * cords = new double[3];
+    std::string::size_type first_size;
+    std::string::size_type second_size;
+    cords[0] = std::stod (input, &first_size);
+    cords[1] = std::stod (input.substr(first_size), &second_size);
+    cords[2] = std::stod (input.substr(first_size + second_size));
+
+    return cords;
 }
