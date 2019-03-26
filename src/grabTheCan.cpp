@@ -7,7 +7,12 @@
 #include <moveit_msgs/CollisionObject.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
+//        0.575562 -0.380956 0.375129
+//Origin: 0.559703 -0.37644 0.380825 
+//Destination: 0.659703 0.19 0.42
 
+//0.571120 -0.289864 0.375117
+//0.555261 -0.285348 0.380825
 // ROS
 #include <ros/ros.h>
 
@@ -69,9 +74,9 @@ void place(moveit::planning_interface::MoveGroupInterface& group, double *a)
     /* Defined with respect to frame_id */
     // place_location[0].post_place_retreat.direction.header.frame_id = "base_footprint";
     /* Direction is set as negative y axis */
-    place_location[0].post_place_retreat.direction.vector.y = 0.0;
-    place_location[0].post_place_retreat.min_distance = 0.0;
-    place_location[0].post_place_retreat.desired_distance = 0.0;
+    place_location[0].post_place_retreat.direction.vector.z = 0.3;
+    place_location[0].post_place_retreat.min_distance = 0.01;
+    place_location[0].post_place_retreat.desired_distance = 0.1;
 
     // Setting posture of eef after placing object
     // +++++++++++++++++++++++++++++++++++++++++++
